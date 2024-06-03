@@ -1,6 +1,5 @@
 package com.sscarlett.big_ambitions_companion.service;
 
-import com.sscarlett.big_ambitions_companion.model.IdValue;
 import com.sscarlett.big_ambitions_companion.model.StoreCap;
 
 import java.util.List;

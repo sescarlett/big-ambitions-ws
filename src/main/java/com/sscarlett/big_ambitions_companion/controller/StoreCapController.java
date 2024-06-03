@@ -1,9 +1,7 @@
 package com.sscarlett.big_ambitions_companion.controller;
 
-import com.sscarlett.big_ambitions_companion.model.IdValue;
 import com.sscarlett.big_ambitions_companion.model.StoreCap;
 import com.sscarlett.big_ambitions_companion.service.StoreCapServiceImpl;
-import org.apache.ibatis.annotations.Insert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
