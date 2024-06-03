@@ -1,6 +1,7 @@
 package com.sscarlett.big_ambitions_companion.service;
 
 import com.sscarlett.big_ambitions_companion.dao.ProductDao;
+import com.sscarlett.big_ambitions_companion.model.IdValue;
 import com.sscarlett.big_ambitions_companion.model.Product;
 import com.sscarlett.big_ambitions_companion.model.ProductDisplay;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ public class ProductServiceImpl implements ProductService {
     public void postNewProduct(ProductDisplay product) {
         Integer newId = productDao.selectMaxId();
         productDao.insertNewProduct(newId, product.getName());
-        productDao.insertDisplayX(newId, product.getDisplays());
+        for (IdValue newValue : product.getDisplays()) {
+            productDao.insertDisplayX(newId, newValue);
+        }
     }
 }

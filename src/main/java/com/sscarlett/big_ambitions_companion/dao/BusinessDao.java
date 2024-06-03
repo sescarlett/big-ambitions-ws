@@ -1,5 +1,6 @@
 package com.sscarlett.big_ambitions_companion.dao;
 
+import com.sscarlett.big_ambitions_companion.model.Business;
 import com.sscarlett.big_ambitions_companion.model.BusinessPlan;
 import com.sscarlett.big_ambitions_companion.model.Display;
 import com.sscarlett.big_ambitions_companion.model.Product;
@@ -33,4 +34,11 @@ public interface BusinessDao {
            "WHERE bxp.business_id = #{businessId} " +
            "GROUP BY d.display_id, d.name, d.cost, d.customer_cap")
    List<Display> selectDisplaysByBusiness(Integer businessId, Integer businessCap);
+
+   @Insert("INSERT INTO business (name, size) VALUES (#{name}, #{size})")
+   void insertNewBusiness(Business business);
+
+   @Insert("INSERT INTO business_x_product (business_id, product_id) " +
+           "VALUES (#{businessId}, #{productId})")
+   void insertProductX(Integer businessId, Integer productId);
 }
