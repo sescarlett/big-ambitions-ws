@@ -29,4 +29,10 @@ public class BusinessController {
     public void postBusinessProducts(@RequestBody List<Integer> productIds, @PathVariable Integer businessId) {
         businessService.postBusinessProducts(businessId, productIds);
     }
+
+    @GetMapping(value = "/list/{gameId}", produces = "application/json")
+    public List<Business> getBusinessByGame(@PathVariable Integer gameId) {
+        return businessService.getBusinessByGame(gameId);
+
+    }
 }

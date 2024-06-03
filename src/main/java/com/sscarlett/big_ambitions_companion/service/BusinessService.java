@@ -26,4 +26,11 @@ public interface BusinessService {
      * @param productIds list of ids
      */
     void postBusinessProducts(Integer businessId, List<Integer> productIds);
+
+    /**
+     * gets all businesses for a game
+     * @param gameId id
+     * @return list of businesses
+     */
+    List<Business> getBusinessByGame(Integer gameId);
 }

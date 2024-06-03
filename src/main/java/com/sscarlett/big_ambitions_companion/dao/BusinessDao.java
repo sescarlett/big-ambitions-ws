@@ -41,4 +41,10 @@ public interface BusinessDao {
    @Insert("INSERT INTO business_x_product (business_id, product_id) " +
            "VALUES (#{businessId}, #{productId})")
    void insertProductX(Integer businessId, Integer productId);
+
+   @Select("SELECT b.business_id, b.name, sc.capacity * 5 as size FROM business b " +
+           "JOIN game_x_business gxb ON b.business_id = gxb.business_id " +
+           "JOIN store_cap sc ON b.size = sc.store_cap_id " +
+           "WHERE gxb.game_id = #{gameId}")
+    List<Business> selectBusinessByGame(Integer gameId);
 }

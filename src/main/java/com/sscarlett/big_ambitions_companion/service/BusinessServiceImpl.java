@@ -52,4 +52,15 @@ public class BusinessServiceImpl implements BusinessService {
             businessDao.insertProductX(businessId, i);
         }
     }
+
+    /**
+     * gets all businesses for a game
+     *
+     * @param gameId id
+     * @return list of businesses
+     */
+    @Override
+    public List<Business> getBusinessByGame(Integer gameId) {
+        return businessDao.selectBusinessByGame(gameId);
+    }
 }
