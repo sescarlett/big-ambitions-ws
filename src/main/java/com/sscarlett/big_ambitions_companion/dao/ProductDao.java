@@ -20,13 +20,7 @@ public interface ProductDao {
     @Insert("INSERT INTO product (product_id, name) VALUES (#{productId}, #{name})")
     void insertNewProduct(Integer productId, String name);
 
-    @Insert({
-            "<script>" +
-            "INSERT INTO product_x_display (product_id, display_id, inventory_cap) VALUES " +
-            "<foreach collection='displays' item='item' separator=','>" +
-            "(#{productId}, #{item.id}, #{item.value})" +
-            "</foreach>" +
-            "</script>"
-    })
-    void insertDisplayX(Integer productId, List<IdValue> displays);
+    @Insert("INSERT INTO product_x_display (product_id, display_id, inventory_cap) " +
+            "VALUES (#{productId}, #{id}, #{value})")
+    void insertDisplayX(Integer productId, IdValue display);
 }
