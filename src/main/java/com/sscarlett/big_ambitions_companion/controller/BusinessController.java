@@ -33,6 +33,10 @@ public class BusinessController {
     @GetMapping(value = "/list/{gameId}", produces = "application/json")
     public List<Business> getBusinessByGame(@PathVariable Integer gameId) {
         return businessService.getBusinessByGame(gameId);
+    }
 
+    @PatchMapping(value = "/update/products/{businessId}")
+    public void patchBusinessProducts( @PathVariable Integer businessId, @RequestBody List<Integer> products) {
+        businessService.patchBusinessProducts(businessId, products);
     }
 }

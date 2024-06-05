@@ -33,4 +33,11 @@ public interface BusinessService {
      * @return list of businesses
      */
     List<Business> getBusinessByGame(Integer gameId);
+
+    /**
+     * updates a businesses products
+     * @param businessId business id
+     * @param products list of product ids in business
+     */
+    void patchBusinessProducts(Integer businessId, List<Integer> products);
 }

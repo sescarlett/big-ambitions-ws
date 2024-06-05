@@ -38,6 +38,12 @@ public interface BusinessDao {
    @Insert("INSERT INTO business (name, size) VALUES (#{name}, #{size})")
    void insertNewBusiness(Business business);
 
+   @Select("SELECT product_id from business_x_product WHERE business_id = #{businessId}")
+   List<Integer> selectBusinessProducts(Integer businessId);
+
+   @Delete("DELETE FROM business_x_product WHERE business_id = #{businessId} AND product_id = #{productId}")
+   void deleteProductX(Integer businessId, Integer productId);
+
    @Insert("INSERT INTO business_x_product (business_id, product_id) " +
            "VALUES (#{businessId}, #{productId})")
    void insertProductX(Integer businessId, Integer productId);

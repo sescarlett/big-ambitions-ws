@@ -14,7 +14,7 @@ public interface ProductDao {
     @Select("SELECT COALESCE(MAX(product_id) + 1, 1) FROM product")
     Integer selectMaxId();
 
-    @Select("SELECT * FROM product")
+    @Select("SELECT * FROM product order by name")
     List<Product> selectAllProducts();
 
     @Insert("INSERT INTO product (product_id, name) VALUES (#{productId}, #{name})")
