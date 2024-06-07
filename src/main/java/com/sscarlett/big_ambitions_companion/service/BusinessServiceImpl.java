@@ -5,12 +5,14 @@ import com.sscarlett.big_ambitions_companion.model.Business;
 import com.sscarlett.big_ambitions_companion.model.BusinessPlan;
 import com.sscarlett.big_ambitions_companion.model.Display;
 import com.sscarlett.big_ambitions_companion.model.Product;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class BusinessServiceImpl implements BusinessService {
 
     @Autowired
@@ -36,8 +38,14 @@ public class BusinessServiceImpl implements BusinessService {
      * @param business info
      */
     @Override
-    public void postNewBusiness(Business business) {
+    public void postNewBusiness(Business business, Integer gameId) {
+        Integer newId = businessDao.selectMaxId();
+        log.info("newId: " + newId);
+        business.setBusinessId(newId);
+//        log.info("business: " + business);
         businessDao.insertNewBusiness(business);
+        businessDao.insertGameX(gameId, newId);
+
     }
 
     /**
@@ -69,9 +77,10 @@ public class BusinessServiceImpl implements BusinessService {
      *
      * @param businessId business id
      * @param products   list of product ids in business
+     * @return business plan
      */
     @Override
-    public void patchBusinessProducts(Integer businessId, List<Integer> products) {
+    public BusinessPlan patchBusinessProducts(Integer businessId, List<Integer> products) {
         List<Integer> dbProducts = businessDao.selectBusinessProducts(businessId);
 
         // Add products that are in the provided list but not in the database
@@ -87,5 +96,13 @@ public class BusinessServiceImpl implements BusinessService {
                 businessDao.deleteProductX(businessId, dbProductId);
             }
         }
+
+        BusinessPlan bp = businessDao.selectBusinessPlan(businessId);
+        List<Product> p = businessDao.selectProductsByBusiness(businessId, bp.getBusinessCap());
+        List<Display> d = businessDao.selectDisplaysByBusiness(businessId, bp.getBusinessCap());
+        bp.setProductList(p);
+        bp.setDisplayList(d);
+        //get new business plan
+        return bp;
     }
 }
