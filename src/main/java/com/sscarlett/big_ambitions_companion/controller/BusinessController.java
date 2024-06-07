@@ -20,9 +20,9 @@ public class BusinessController {
         return businessService.getBusinessPlan(businessId);
     }
 
-    @PostMapping(value = "/new")
-    public void postNewBusiness(@RequestBody Business business) {
-        businessService.postNewBusiness(business);
+    @PostMapping(value = "/new/{gameId}")
+    public void postNewBusiness(@RequestBody Business business, @PathVariable Integer gameId) {
+        businessService.postNewBusiness(business, gameId);
     }
 
     @PostMapping(value = "/products/{businessId}")
@@ -33,6 +33,10 @@ public class BusinessController {
     @GetMapping(value = "/list/{gameId}", produces = "application/json")
     public List<Business> getBusinessByGame(@PathVariable Integer gameId) {
         return businessService.getBusinessByGame(gameId);
+    }
 
+    @PatchMapping(value = "/update/products/{businessId}")
+    public BusinessPlan patchBusinessProducts( @PathVariable Integer businessId, @RequestBody List<Integer> products) {
+        return businessService.patchBusinessProducts(businessId, products);
     }
 }

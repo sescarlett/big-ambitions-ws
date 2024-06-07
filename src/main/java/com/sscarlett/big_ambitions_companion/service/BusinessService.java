@@ -17,7 +17,7 @@ public interface BusinessService {
      * creates new business
      * @param business info
      */
-    void postNewBusiness(Business business);
+    void postNewBusiness(Business business, Integer gameId);
 
     /**
      * inserts products into the business/product cross table
@@ -33,4 +33,13 @@ public interface BusinessService {
      * @return list of businesses
      */
     List<Business> getBusinessByGame(Integer gameId);
+
+    /**
+     * updates a businesses products
+     *
+     * @param businessId business id
+     * @param products   list of product ids in business
+     * @return business plan
+     */
+    BusinessPlan patchBusinessProducts(Integer businessId, List<Integer> products);
 }

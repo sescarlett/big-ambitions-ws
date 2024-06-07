@@ -34,7 +34,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer loginUser(Users users) {
         Boolean isPasswordValid = userDao.verifyPassword(users);
-        return Boolean.TRUE.equals(isPasswordValid) ? userDao.selectUserIdByLogin(users) : 0;
+        if (!Boolean.TRUE.equals(isPasswordValid)) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+
+        return userDao.selectUserIdByLogin(users);
     }
 
     /**

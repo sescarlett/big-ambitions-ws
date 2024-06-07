@@ -11,6 +11,9 @@ import java.util.List;
 @Mapper
 public interface BusinessDao {
 
+   @Select("SELECT COALESCE(MAX(business_id) + 1, 1) FROM business")
+   Integer selectMaxId();
+
    @Select("SELECT business_id, name as businessName, sc.capacity * 5 as businessCap " +
            "FROM business b " +
            "JOIN store_cap sc ON b.size = sc.store_cap_id " +
@@ -35,8 +38,14 @@ public interface BusinessDao {
            "GROUP BY d.display_id, d.name, d.cost, d.customer_cap")
    List<Display> selectDisplaysByBusiness(Integer businessId, Integer businessCap);
 
-   @Insert("INSERT INTO business (name, size) VALUES (#{name}, #{size})")
+   @Insert("INSERT INTO business (business_id, name, size) VALUES (#{businessId}, #{name}, #{size})")
    void insertNewBusiness(Business business);
+
+   @Select("SELECT product_id from business_x_product WHERE business_id = #{businessId}")
+   List<Integer> selectBusinessProducts(Integer businessId);
+
+   @Delete("DELETE FROM business_x_product WHERE business_id = #{businessId} AND product_id = #{productId}")
+   void deleteProductX(Integer businessId, Integer productId);
 
    @Insert("INSERT INTO business_x_product (business_id, product_id) " +
            "VALUES (#{businessId}, #{productId})")
@@ -47,4 +56,7 @@ public interface BusinessDao {
            "JOIN store_cap sc ON b.size = sc.store_cap_id " +
            "WHERE gxb.game_id = #{gameId}")
     List<Business> selectBusinessByGame(Integer gameId);
+
+   @Insert("INSERT INTO game_x_business (game_id, business_id) VALUES (#{gameId}, #{businessId})")
+   void insertGameX(Integer gameId, Integer businessId);
 }

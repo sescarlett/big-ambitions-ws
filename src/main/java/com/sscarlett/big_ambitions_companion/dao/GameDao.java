@@ -13,13 +13,18 @@ public interface GameDao {
     @Select("SELECT COALESCE(MAX(game_id) + 1, 1) FROM game")
     Integer selectMaxId();
 
-    @Select("SELECT g.*, COUNT(gxb.business_id) AS numBusiness FROM game g " +
+    @Select("SELECT g.*, COALESCE(sub.numBusiness, 0) AS numBusiness " +
+            "FROM game g " +
+            "LEFT JOIN " +
+            "(SELECT gxb.game_id, COUNT(gxb.business_id) AS numBusiness " +
+            "FROM game_x_business gxb " +
+            "GROUP BY gxb.game_id) " +
+            "AS sub ON g.game_id = sub.game_id " +
             "JOIN user_x_game uxg ON g.game_id = uxg.game_id " +
-            "JOIN game_x_business gxb ON g.game_id = gxb.game_id " +
-            "WHERE user_id = #{userId} " +
-            "GROUP BY g.game_id")
+            "WHERE uxg.user_id = 1")
     List<Game> selectUsersGames(Integer userId);
 
+    @Insert("INSERT INTO game (game_id, name) values (#{gameId}, #{name})")
     void insertNewGame(Game game);
 
     @Insert("INSERT INTO user_x_game (user_id, game_id) " +
