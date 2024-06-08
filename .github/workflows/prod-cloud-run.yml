@@ -1,0 +1,123 @@
+on:
+  push:
+    branches:
+      - main
+
+name: PROD Build and Deploy to Cloud Run
+env:
+#  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+#  SA_WIF_EMAIL: ${{ secrets.SA_WIF_EMAIL }}
+  REGISTRY_FOLDER_NAME: ${{ vars.REGISTRY_FOLDER_NAME }}
+#  REGISTRY_REGION: ${{ vars.REGISTRY_REGION }}
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
+  SERVICE: sscarlett-big-ambitions-ws
+  CLOUD_RUN_SA: ${{ secrets.CLOUD_RUN_SA }}
+  CLOUD_SQL_CONNECTION: ${{ secrets.CLOUD_SQL_CONNECTION }}
+  VPC_CONNECTION: ${{ secrets.VPC_CONNECTION }}
+  REGION: us-central1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: prod
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+#      - name: Auth
+#        uses: google-github-actions/auth@v2
+#        with:
+#          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+#          service_account: ${{ env.SA_WIF_EMAIL }}
+
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Get short SHA
+        id: short_sha
+        run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          check-latest: true
+
+      - name: Cache the Maven packages to speed up build
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Get Git version
+        id: git_version
+        run: mvn io.github.git-commit-id:git-commit-id-maven-plugin:revision -DskipTests -Dmaven.test.skip=true
+
+      - name: Read value from git.properties
+        id: read_property
+        uses: christian-draeger/read-properties@1.1.1
+        with:
+          path: './target/classes/git.properties'
+          properties: 'git.commit.id.describe'
+
+      - name: Write version to files
+        run: |
+          ls -la
+          echo version=${{ steps.read_property.outputs.git-commit-id-describe }} > ./src/main/resources/version.properties
+          sed -i "s;REPLACE_VERSION;${{ steps.read_property.outputs.git-commit-id-describe }};g" pom.xml
+
+      - name: Write env info to file
+        run: |
+          echo env=dev > ./src/main/resources/env.properties
+          echo hostingLocation=cloudrun >> ./src/main/resources/env.properties
+          echo accountName=${{ env.PROJECT_ID }} >> ./src/main/resources/env.properties
+
+      - name: Authorize buildpack/Docker push
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: Maven Build
+        run: |
+          mvn install -Dmaven.test.skip=true
+
+      - name: Build and Push Container
+        run: |-
+          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGISTRY_FOLDER_NAME }}/${{ env.SERVICE }}:${{ steps.read_property.outputs.git-commit-id-describe }} -t ${{ env.REGISTRY_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGISTRY_FOLDER_NAME }}/${{ env.SERVICE }}:latest .
+          docker push --all-tags ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGISTRY_FOLDER_NAME }}/${{ env.SERVICE }}
+
+      - name: Get VPC Connector ID
+        id: vpc_id
+        run: |
+          gcloud compute networks vpc-access connectors describe ${{ env.VPC_CONNECTION }} --region=${{ env.REGION }} --format="value(name)"
+
+      - name: Deploy to Cloud Run
+        run: |-
+          gcloud run deploy ${{ env.SERVICE }} \
+            --project ${{ env.PROJECT_ID }} \
+            --region ${{ env.REGION }} \
+            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGISTRY_FOLDER_NAME }}/${{ env.SERVICE }}:${{ steps.read_property.outputs.git-commit-id-describe }} \
+            --port 80 \
+            --min-instances 1 \
+            --max-instances 1 \
+            --memory 1Gi \
+            --concurrency 100 \
+            --platform "managed" \
+            --allow-unauthenticated \
+            --ingress internal-and-cloud-load-balancing \
+            --set-cloudsql-instances ${{ env.CLOUD_SQL_CONNECTION }} \
+            --service-account ${{ env.CLOUD_RUN_SA }} \
+            --set-env-vars "logback.appenders=CLOUD,PROJECT_NUMBER=${{ env.PROJECT_NUMBER }}" \
+            --vpc-connector ${{ steps.vpc_id.outputs.stdout }} \
+            --vpc-egress all-traffic \
+            --quiet
