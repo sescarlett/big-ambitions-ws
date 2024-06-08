@@ -7,11 +7,11 @@ name: PROD Build and Deploy to Cloud Run
 env:
 #  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
 #  SA_WIF_EMAIL: ${{ secrets.SA_WIF_EMAIL }}
-  REGISTRY_FOLDER_NAME: ${{ vars.REGISTRY_FOLDER_NAME }}
-#  REGISTRY_REGION: ${{ vars.REGISTRY_REGION }}
+#  REGISTRY_FOLDER_NAME: ${{ vars.REGISTRY_FOLDER_NAME }}
+##  REGISTRY_REGION: ${{ vars.REGISTRY_REGION }}
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
-  SERVICE: sscarlett-big-ambitions-ws
+  SERVICE: tiered-web-app-api
   CLOUD_RUN_SA: ${{ secrets.CLOUD_RUN_SA }}
   CLOUD_SQL_CONNECTION: ${{ secrets.CLOUD_SQL_CONNECTION }}
   VPC_CONNECTION: ${{ secrets.VPC_CONNECTION }}
