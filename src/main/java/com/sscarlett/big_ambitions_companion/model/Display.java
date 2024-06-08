@@ -8,5 +8,6 @@ public class Display {
     private String name;
     private Integer cost;
     private Integer customerCap;
+    //used for sql returns
     private Integer quantity;
 }

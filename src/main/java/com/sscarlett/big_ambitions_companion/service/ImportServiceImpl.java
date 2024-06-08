@@ -23,4 +23,15 @@ public class ImportServiceImpl implements ImportService {
     public List<Import> getProductValuesPerImport(ImportSelect importSelect) {
         return importDao.selectProductValuesPerImport(importSelect);
     }
+
+    /**
+     * selects the cross table of importers for a product
+     *
+     * @param productId id
+     * @return list of Int
+     */
+    @Override
+    public List<Integer> getImporterByProduct(Integer productId) {
+        return importDao.selectImporterByProduct(productId);
+    }
 }

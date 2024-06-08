@@ -22,4 +22,9 @@ public class ImportController {
         log.info("is: " + importSelect);
         return importService.getProductValuesPerImport(importSelect);
     }
+
+    @GetMapping(value = "/product/{productId}", produces = "application/json")
+    public List<Integer> getImporterByProduct(@PathVariable Integer productId) {
+        return importService.getImporterByProduct(productId);
+    }
 }

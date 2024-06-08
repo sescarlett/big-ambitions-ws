@@ -24,4 +24,9 @@ public class ProductController {
     public void postNewProduct(@RequestBody ProductDisplay product) {
         productService.postNewProduct(product);
     }
+
+    @PatchMapping(value = "/update")
+    public void patchProduct(@RequestBody ProductDisplay product) {
+        productService.patchProduct(product);
+    }
 }

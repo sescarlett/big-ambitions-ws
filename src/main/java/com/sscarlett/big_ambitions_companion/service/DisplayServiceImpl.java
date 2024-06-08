@@ -2,6 +2,7 @@ package com.sscarlett.big_ambitions_companion.service;
 
 import com.sscarlett.big_ambitions_companion.dao.DisplayDao;
 import com.sscarlett.big_ambitions_companion.model.Display;
+import com.sscarlett.big_ambitions_companion.model.IdValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,5 +42,16 @@ public class DisplayServiceImpl implements DisplayService {
     @Override
     public void patchDisplay(Display display) {
         displayDao.updateDisplay(display);
+    }
+
+    /**
+     * get idValue objects for displays by
+     *
+     * @param productId id
+     * @return list
+     */
+    @Override
+    public List<IdValue> getDisplaysForProduct(int productId) {
+        return displayDao.selectDisplaysForProduct(productId);
     }
 }
