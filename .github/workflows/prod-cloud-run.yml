@@ -7,7 +7,7 @@ name: PROD Build and Deploy to Cloud Run
 env:
   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 #  SA_WIF_EMAIL: ${{ secrets.SA_WIF_EMAIL }}
-#  REGISTRY_FOLDER_NAME: ${{ vars.REGISTRY_FOLDER_NAME }}
+  REGISTRY_FOLDER_NAME: ${{ vars.REGISTRY_FOLDER_NAME }}
 #  REGISTRY_REGION: ${{ vars.REGISTRY_REGION }}
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
@@ -96,10 +96,10 @@ jobs:
       - name: Build and Push Container
         run: |-
           docker build \
-            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGION }}/${{ env.SERVICE }}:${{ steps.read_property.outputs.git-commit-id-describe }} \
-            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGION }}/${{ env.SERVICE }}:latest \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGISTRY_FOLDER_NAME }}/${{ env.SERVICE }}:${{ steps.read_property.outputs.git-commit-id-describe }} \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGISTRY_FOLDER_NAME }}/${{ env.SERVICE }}:latest \
             .
-          docker push --all-tags ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGION }}/${{ env.SERVICE }}
+          docker push --all-tags ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGISTRY_FOLDER_NAME }}/${{ env.SERVICE }}
 
       - name: Get VPC Connector ID
         id: vpc_id
@@ -111,7 +111,7 @@ jobs:
           gcloud run deploy ${{ env.SERVICE }} \
             --project ${{ env.PROJECT_ID }} \
             --region ${{ env.REGION }} \
-            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGION }}/${{ env.SERVICE }}:${{ steps.read_property.outputs.git-commit-id-describe }} \
+            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REGISTRY_FOLDER_NAME }}/${{ env.SERVICE }}:${{ steps.read_property.outputs.git-commit-id-describe }} \
             --port 80 \
             --min-instances 1 \
             --max-instances 1 \
