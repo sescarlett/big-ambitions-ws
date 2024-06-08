@@ -93,16 +93,6 @@
 			<version>26.40.0</version>
 			<type>pom</type>
 		</dependency>
-		<dependency>
-			<groupId>io.grpc</groupId>
-			<artifactId>grpc-context</artifactId>
-			<version>1.64.0</version>
-		</dependency>
-		<dependency>
-			<groupId>io.grpc</groupId>
-			<artifactId>grpc-api</artifactId>
-			<version>1.62.2</version>
-		</dependency>
 	</dependencies>
 
 	<build>
