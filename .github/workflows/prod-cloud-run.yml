@@ -34,18 +34,12 @@ jobs:
           fetch-depth: 0
 
       - name: Google Auth
-        id: auth
         uses: google-github-actions/auth@v0.4.0
         with:
           credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
 
       - name: Docker Auth
-        id: docker-auth
-        uses: 'docker/login-action@v1'
-        with:
-          username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.access_token }}'
-          registry: '${{ vars.REGION }}-docker.pkg.dev'
+        run: gcloud auth configure-docker
 
       - name: Setup Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
