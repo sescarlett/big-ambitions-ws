@@ -12,8 +12,8 @@ public interface UserDao {
     @Select("SELECT COALESCE(MAX(user_id) + 1, 1) FROM users")
     Integer selectMaxId();
 
-    @Insert("INSERT INTO users (user_id, name, email, password, user_role) " +
-            "VALUES (#{userId}, #{name}, #{email}, crypt(#{password}, gen_salt('bf')), 2)")
+    @Insert("INSERT INTO users (user_id, first_name, last_name, email, password, user_role) " +
+            "VALUES (#{userId}, #{firstName}, #{lastName}, #{email}, crypt(#{password}, gen_salt('bf')), 2)")
     void insertNewUser(Users users);
 
     @Select("SELECT crypt(#{password}, password) = password " +
@@ -23,10 +23,10 @@ public interface UserDao {
     @Select("SELECT user_id FROM users WHERE email = #{email}")
     Integer selectUserIdByLogin(Users users);
 
-    @Select("SELECT name, email FROM users WHERE user_id = #{userId}")
+    @Select("SELECT first_name, email FROM users WHERE user_id = #{userId}")
     Users selectUserById(Integer userId);
 
-    @Update("UPDATE users SET name = #{name}, email = #{email} " +
+    @Update("UPDATE users SET first_name = #{firstName}, last_name = #{lastName}, email = #{email} " +
             "WHERE user_id = #{userId}")
     void updateUser(Users users);
 
