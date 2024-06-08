@@ -33,9 +33,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Auth Gcloud
+        run: gcloud auth login
 
-
-      - name: Auth
+      - name: Auth Docker
         run: gcloud auth configure-docker
 
       - name: Setup Cloud SDK
