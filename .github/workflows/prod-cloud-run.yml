@@ -5,10 +5,10 @@ on:
 
 name: PROD Build and Deploy to Cloud Run
 env:
-#  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 #  SA_WIF_EMAIL: ${{ secrets.SA_WIF_EMAIL }}
 #  REGISTRY_FOLDER_NAME: ${{ vars.REGISTRY_FOLDER_NAME }}
-##  REGISTRY_REGION: ${{ vars.REGISTRY_REGION }}
+#  REGISTRY_REGION: ${{ vars.REGISTRY_REGION }}
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
   SERVICE: tiered-web-app-api
@@ -34,7 +34,9 @@ jobs:
           fetch-depth: 0
 
       - name: Auth Gcloud
-        run: gcloud auth login
+        uses: google-github-actions/auth@v0.4.0
+        with:
+          credentials_json: ${{ env.GOOGLE_CREDENTIALS }}
 
       - name: Auth Docker
         run: gcloud auth configure-docker
