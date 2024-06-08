@@ -115,7 +115,7 @@ jobs:
           gcloud run deploy ${{ env.SERVICE }} \
             --project ${{ env.PROJECT_ID }} \
             --region ${{ env.REGION }} \
-            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.ARTIFACT_REPO }}/${{ env.SERVICE }}:${{ steps.read_property.outputs.git-commit-id-describe }} \
+            --image us-central1-docker.pkg.dev/big-ambitions-companion/scarlett-apps-images-prod/tiered-web-app-api:${{ steps.read_property.outputs.git-commit-id-describe }} \
             --port 80 \
             --min-instances 1 \
             --max-instances 1 \
