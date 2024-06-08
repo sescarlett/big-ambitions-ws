@@ -126,6 +126,6 @@ jobs:
             --set-cloudsql-instances ${{ env.CLOUD_SQL_CONNECTION }} \
             --service-account ${{ env.CLOUD_RUN_SA }} \
             --set-env-vars "logback.appenders=CLOUD,PROJECT_NUMBER=${{ env.PROJECT_NUMBER }}" \
-            --vpc-connector ${{ steps.vpc_name.outputs.name   }} \
+            --vpc-connector ${{ steps.vpc_name.outputs.stdout }} \
             --vpc-egress all-traffic \
             --quiet
