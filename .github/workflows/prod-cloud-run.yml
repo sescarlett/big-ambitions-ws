@@ -92,6 +92,10 @@ jobs:
       - name: Maven Build
         run: |
           mvn install -Dmaven.test.skip=true
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          version: v0.7.0
 
       - name: Build, tag and push container
         id: build-image
