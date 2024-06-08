@@ -1,6 +1,7 @@
 package com.sscarlett.big_ambitions_companion.controller;
 
 import com.sscarlett.big_ambitions_companion.model.Display;
+import com.sscarlett.big_ambitions_companion.model.IdValue;
 import com.sscarlett.big_ambitions_companion.service.DisplayServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,5 +28,10 @@ public class DisplayController {
     @PatchMapping(value = "/update")
     public void patchDisplay(@RequestBody Display display) {
         displayService.patchDisplay(display);
+    }
+
+    @GetMapping(value = "/products/{productId}", produces = "application/json")
+    public List<IdValue> getDisplaysForProduct(@PathVariable int productId) {
+        return displayService.getDisplaysForProduct(productId);
     }
 }

@@ -18,4 +18,10 @@ public interface ProductService {
      * @param product info
      */
     void postNewProduct(ProductDisplay product);
+
+    /**
+     * updates an existing product
+     * @param product info
+     */
+    void patchProduct(ProductDisplay product);
 }

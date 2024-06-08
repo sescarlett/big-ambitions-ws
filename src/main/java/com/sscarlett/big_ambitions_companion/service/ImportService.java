@@ -13,4 +13,11 @@ public interface ImportService {
      * @return list
      */
     List<Import> getProductValuesPerImport(ImportSelect importSelect);
+
+    /**
+     * selects the cross table of importers for a product
+     * @param productId id
+     * @return list of Int
+     */
+    List<Integer> getImporterByProduct(Integer productId);
 }

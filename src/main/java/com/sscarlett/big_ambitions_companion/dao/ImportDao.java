@@ -25,4 +25,7 @@ public interface ImportDao {
             "JOIN day_per_order dpo on dpo.day_per_order_id = #{dayPerOrderId} " +
             "WHERE ixp.import_id = #{importId} AND gxb.game_id = #{gameId}")
     List<Import> selectProductValuesPerImport(ImportSelect importSelect);
+
+    @Select("SELECT import_id FROM import_x_product WHERE product_id = #{productId}")
+    List<Integer> selectImporterByProduct(Integer productId);
 }
