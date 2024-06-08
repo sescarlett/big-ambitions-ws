@@ -92,6 +92,7 @@ jobs:
       - name: Maven Build
         run: |
           mvn install -Dmaven.test.skip=true
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -99,6 +100,7 @@ jobs:
         id: build-image
         uses: docker/build-push-action@v3
         with:
+          platforms: linux/amd64
           context: .
           push: true
           tags: |
