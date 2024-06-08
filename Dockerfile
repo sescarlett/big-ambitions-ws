@@ -1,5 +1,5 @@
 FROM eclipse-temurin:17-jdk-jammy as build
-LABEL authors="Battlestation"
+LABEL authors="Stephen Scarlett"
 
 WORKDIR /workspace/app
 
