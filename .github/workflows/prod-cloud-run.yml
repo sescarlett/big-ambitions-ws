@@ -33,11 +33,10 @@ jobs:
         with:
           fetch-depth: 0
 
-#      - name: Auth
-#        uses: google-github-actions/auth@v2
-#        with:
-#          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
-#          service_account: ${{ env.SA_WIF_EMAIL }}
+
+
+      - name: Auth
+        run: gcloud auth configure-docker
 
       - name: Setup Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
