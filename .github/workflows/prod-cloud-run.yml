@@ -107,7 +107,8 @@ jobs:
       - name: Get VPC Connector ID
         id: vpc_name
         run: |
-          gcloud compute networks vpc-access connectors describe ${{ env.VPC_CONNECTION }} --region=${{ env.REGION }} --format="value(name)"
+          vpc_name=$(gcloud compute networks vpc-access connectors describe ${{ env.VPC_CONNECTION }} --region=${{ env.REGION }} --format="value(name)")
+          echo "::set-output name=vpc_name::$vpc_name"
 
       - name: Deploy to Cloud Run
         run: |-
@@ -126,6 +127,6 @@ jobs:
             --set-cloudsql-instances ${{ env.CLOUD_SQL_CONNECTION }} \
             --service-account ${{ env.CLOUD_RUN_SA }} \
             --set-env-vars "logback.appenders=CLOUD,PROJECT_NUMBER=${{ env.PROJECT_NUMBER }}" \
-            --vpc-connector ${{ steps.vpc_name.outputs.stdout }} \
+            --vpc-connector ${{ steps.vpc_name.outputs.vpc_name }} \
             --vpc-egress all-traffic \
             --quiet
