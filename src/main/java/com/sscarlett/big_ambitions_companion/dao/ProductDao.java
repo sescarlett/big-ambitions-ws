@@ -42,4 +42,10 @@ public interface ProductDao {
 
     @Update("UPDATE product_x_display SET inventory_cap = #{inventoryCap} WHERE product_id = #{productId} AND display_id = #{displayId}")
     void updateDisplayX(Integer productId, Integer displayId, Integer inventoryCap);
+
+    @Delete("DELETE FROM product_x_display WHERE product_id = #{productId}")
+    void removeAllDisplays(Integer productId);
+
+    @Delete("DELETE FROM import_x_product WHERE product_id = #{productId}")
+    void removeAllImports(Integer productId);
 }

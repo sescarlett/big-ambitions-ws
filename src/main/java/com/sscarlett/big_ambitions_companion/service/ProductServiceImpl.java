@@ -68,30 +68,53 @@ public class ProductServiceImpl implements ProductService {
         List<Integer> currentImporters = productDao.selectImportX(product.getProductId());
 
         // Update or insert displays
-        for (IdValue newValue : product.getDisplays()) {
-            boolean exists = currentDisplays.stream().anyMatch(display -> Objects.equals(display.getId(), newValue.getId()));
-            if (exists) {
-                productDao.updateDisplayX(product.getProductId(), newValue.getId(), newValue.getValue());
-            } else {
-                productDao.insertDisplayX(product.getProductId(), newValue.getId(), newValue.getValue());
+        if(product.getDisplays() != null) {
+            for (IdValue newValue : product.getDisplays()) {
+                boolean exists = currentDisplays.stream().anyMatch(display -> Objects.equals(display.getId(), newValue.getId()));
+                if (exists) {
+                    productDao.updateDisplayX(product.getProductId(), newValue.getId(), newValue.getValue());
+                } else {
+                    productDao.insertDisplayX(product.getProductId(), newValue.getId(), newValue.getValue());
+                }
             }
         }
 
         // Remove displays not in the new list
-        currentDisplays.stream()
-                .filter(display -> product.getDisplays().stream().noneMatch(newValue -> Objects.equals(newValue.getId(), display.getId())))
-                .forEach(display -> productDao.removeDisplayX(product.getProductId(), display.getId()));
+        for (IdValue newValue : currentDisplays) {
+            if (product.getDisplays() == null) {
+                // Remove all displays associated with the product
+                productDao.removeAllDisplays(product.getProductId());
+                break; // Exit the loop as all displays are already removed
+            }
+
+            boolean noMatch = product.getDisplays().stream().noneMatch(display -> Objects.equals(display.getId(), newValue.getId()));
+
+            if (noMatch) {
+                productDao.removeDisplayX(product.getProductId(), newValue.getId());
+            }
+        }
 
         // Insert importers not currently existing
-        for (Integer importer : product.getImporters()) {
-            if (!currentImporters.contains(importer)) {
-                productDao.insertImportX(importer, product.getProductId());
+        if(product.getImporters() != null) {
+            for (Integer importer : product.getImporters()) {
+                if (!currentImporters.contains(importer)) {
+                    productDao.insertImportX(importer, product.getProductId());
+                }
             }
         }
 
         // Remove importers not in the new list
-        currentImporters.stream()
-                .filter(importer -> !product.getImporters().contains(importer))
-                .forEach(importer -> productDao.removeImportX(importer, product.getProductId()));
+        for (Integer importer : currentImporters) {
+
+            if (product.getImporters() == null) {
+                // Remove all importers associated with the product
+                productDao.removeAllImports(product.getProductId());
+                break; // Exit the loop as all importers are already removed
+            }
+
+            if (!product.getImporters().contains(importer)) {
+                productDao.removeImportX(importer, product.getProductId());
+            }
+        }
     }
 }
