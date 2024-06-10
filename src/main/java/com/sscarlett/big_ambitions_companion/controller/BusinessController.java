@@ -2,6 +2,7 @@ package com.sscarlett.big_ambitions_companion.controller;
 
 import com.sscarlett.big_ambitions_companion.model.Business;
 import com.sscarlett.big_ambitions_companion.model.BusinessPlan;
+import com.sscarlett.big_ambitions_companion.model.SingleMultiple;
 import com.sscarlett.big_ambitions_companion.service.BusinessServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,5 +39,10 @@ public class BusinessController {
     @PatchMapping(value = "/update/products/{businessId}")
     public BusinessPlan patchBusinessProducts( @PathVariable Integer businessId, @RequestBody List<Integer> products) {
         return businessService.patchBusinessProducts(businessId, products);
+    }
+
+    @PostMapping(value = "/products/list", produces = "application/json")
+    public SingleMultiple getProductsDisplays(@RequestBody List<Integer> productIds) {
+        return businessService.getProductsDisplays(productIds);
     }
 }

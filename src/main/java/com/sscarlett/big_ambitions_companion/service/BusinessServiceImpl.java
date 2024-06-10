@@ -1,10 +1,7 @@
 package com.sscarlett.big_ambitions_companion.service;
 
 import com.sscarlett.big_ambitions_companion.dao.BusinessDao;
-import com.sscarlett.big_ambitions_companion.model.Business;
-import com.sscarlett.big_ambitions_companion.model.BusinessPlan;
-import com.sscarlett.big_ambitions_companion.model.Display;
-import com.sscarlett.big_ambitions_companion.model.Product;
+import com.sscarlett.big_ambitions_companion.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,5 +101,21 @@ public class BusinessServiceImpl implements BusinessService {
         bp.setDisplayList(d);
         //get new business plan
         return bp;
+    }
+
+    /**
+     * gets products and displays separated by singles and multiples
+     *
+     * @param productIds ids
+     * @return list
+     */
+    @Override
+    public SingleMultiple getProductsDisplays(List<Integer> productIds) {
+        List<Integer> s = businessDao.selectUniqueDisplayIds(productIds);
+        List<IdNameValueName> m = businessDao.selectNonUniqueDisplayIds(productIds);
+        SingleMultiple sm = new SingleMultiple();
+        sm.setSingles(s);
+        sm.setMultiples(m);
+        return sm;
     }
 }

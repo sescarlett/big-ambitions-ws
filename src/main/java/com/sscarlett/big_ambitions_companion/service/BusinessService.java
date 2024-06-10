@@ -2,6 +2,7 @@ package com.sscarlett.big_ambitions_companion.service;
 
 import com.sscarlett.big_ambitions_companion.model.Business;
 import com.sscarlett.big_ambitions_companion.model.BusinessPlan;
+import com.sscarlett.big_ambitions_companion.model.SingleMultiple;
 
 import java.util.List;
 
@@ -42,4 +43,11 @@ public interface BusinessService {
      * @return business plan
      */
     BusinessPlan patchBusinessProducts(Integer businessId, List<Integer> products);
+
+    /**
+     * gets products and displays separated by singles and multiples
+     * @param productIds ids
+     * @return list
+     */
+    SingleMultiple getProductsDisplays(List<Integer> productIds);
 }

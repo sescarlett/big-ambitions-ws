@@ -1,9 +1,6 @@
 package com.sscarlett.big_ambitions_companion.dao;
 
-import com.sscarlett.big_ambitions_companion.model.Business;
-import com.sscarlett.big_ambitions_companion.model.BusinessPlan;
-import com.sscarlett.big_ambitions_companion.model.Display;
-import com.sscarlett.big_ambitions_companion.model.Product;
+import com.sscarlett.big_ambitions_companion.model.*;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -33,8 +30,8 @@ public interface BusinessDao {
            "SUM(CEILING(#{businessCap}::numeric / d.customer_cap::numeric)) as quantity " +
            "FROM display d " +
            "JOIN product_x_display pxd ON d.display_id = pxd.display_id " +
-           "JOIN business_x_product bxp ON pxd.product_id = bxp.product_id " +
-           "WHERE bxp.business_id = #{businessId} " +
+           "JOIN business_x_display bxd ON d.display_id = pxd.display_id " +
+           "WHERE bxd.business_id = #{businessId}" +
            "GROUP BY d.display_id, d.name, d.cost, d.customer_cap")
    List<Display> selectDisplaysByBusiness(Integer businessId, Integer businessCap);
 
@@ -55,8 +52,48 @@ public interface BusinessDao {
            "JOIN game_x_business gxb ON b.business_id = gxb.business_id " +
            "JOIN store_cap sc ON b.size = sc.store_cap_id " +
            "WHERE gxb.game_id = #{gameId}")
-    List<Business> selectBusinessByGame(Integer gameId);
+   List<Business> selectBusinessByGame(Integer gameId);
 
    @Insert("INSERT INTO game_x_business (game_id, business_id) VALUES (#{gameId}, #{businessId})")
    void insertGameX(Integer gameId, Integer businessId);
+
+   @Select({
+           "<script>",
+           "SELECT display_id " +
+                   "FROM product_x_display "+
+                   "WHERE product_id IN (" +
+                   "  SELECT product_id" +
+                   "  FROM product_x_display" +
+                   "  WHERE product_id IN" +
+                   "  <foreach item='item' index='index' collection='productIds'" +
+                   "    open='(' separator=',' close=')'>" +
+                   "    #{item}" +
+                   "  </foreach>" +
+                   "  GROUP BY product_id" +
+                   "  HAVING COUNT(display_id) = 1" +
+                   ")" +
+                   "</script>"
+   })
+   List<Integer> selectUniqueDisplayIds(@Param("productIds") List<Integer> productIds);
+
+   @Select({
+           "<script>",
+           "SELECT pxd.product_id as id, p.name as idName, pxd.display_id as value, d.name as valueName " +
+                   "FROM product_x_display pxd " +
+                   "JOIN display d ON pxd.display_id = d.display_id "+
+                   "JOIN product p ON pxd.product_id = p.product_id "+
+                   "WHERE pxd.product_id IN (" +
+                   "  SELECT pxd2.product_id" +
+                   "  FROM product_x_display pxd2" +
+                   "  WHERE pxd2.product_id IN" +
+                   "  <foreach item='item' index='index' collection='productIds'" +
+                   "    open='(' separator=',' close=')'>" +
+                   "    #{item}" +
+                   "  </foreach>" +
+                   "  GROUP BY pxd2.product_id" +
+                   "  HAVING COUNT(pxd2.display_id) > 1" +
+                   ")" +
+                   "</script>"
+   })
+   List<IdNameValueName> selectNonUniqueDisplayIds(@Param("productIds") List<Integer> productIds);
 }
