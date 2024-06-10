@@ -4,6 +4,7 @@ import com.sscarlett.big_ambitions_companion.dao.ProductDao;
 import com.sscarlett.big_ambitions_companion.model.IdValue;
 import com.sscarlett.big_ambitions_companion.model.Product;
 import com.sscarlett.big_ambitions_companion.model.ProductDisplay;
+import com.sscarlett.big_ambitions_companion.model.ProductList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class ProductServiceImpl implements ProductService {
      * @return list
      */
     @Override
-    public List<Product> getAllProducts() {
+    public List<ProductList> getAllProducts() {
         return productDao.selectAllProducts();
     }
 

@@ -1,7 +1,7 @@
 package com.sscarlett.big_ambitions_companion.controller;
 
-import com.sscarlett.big_ambitions_companion.model.Product;
 import com.sscarlett.big_ambitions_companion.model.ProductDisplay;
+import com.sscarlett.big_ambitions_companion.model.ProductList;
 import com.sscarlett.big_ambitions_companion.service.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ public class ProductController {
     private ProductServiceImpl productService;
 
     @GetMapping(value = "/list", produces = "application/json")
-    public List<Product> getAllProducts() {
+    public List<ProductList> getAllProducts() {
         return productService.getAllProducts();
     }
 
