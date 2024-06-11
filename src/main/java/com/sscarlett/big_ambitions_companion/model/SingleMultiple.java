@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class SingleMultiple {
-     private List<Integer> singles;
+     private List<IdValue> singles;
      private List<IdNameValueName> multiples;
 }

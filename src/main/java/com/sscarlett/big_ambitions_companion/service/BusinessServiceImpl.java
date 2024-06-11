@@ -46,19 +46,6 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     /**
-     * inserts products into the business/product cross table
-     *
-     * @param businessId business id
-     * @param productIds list of ids
-     */
-    @Override
-    public void postBusinessProducts(Integer businessId, List<Integer> productIds) {
-        for(Integer i : productIds) {
-            businessDao.insertProductX(businessId, i);
-        }
-    }
-
-    /**
      * gets all businesses for a game
      *
      * @param gameId id
@@ -73,26 +60,27 @@ public class BusinessServiceImpl implements BusinessService {
      * updates a businesses products
      *
      * @param businessId business id
-     * @param products   list of product ids in business
+     * @param productDisplays   list of product ids in business
      * @return business plan
      */
     @Override
-    public BusinessPlan patchBusinessProducts(Integer businessId, List<Integer> products) {
-        List<Integer> dbProducts = businessDao.selectBusinessProducts(businessId);
+    public BusinessPlan patchBusinessProducts(Integer businessId, List<IdValue> productDisplays) {
+        List<IdValue> dbProducts = businessDao.selectBusinessProducts(businessId);
 
-        // Add products that are in the provided list but not in the database
-        for (Integer productId : products) {
-            if (!dbProducts.contains(productId)) {
-                businessDao.insertProductX(businessId, productId);
+        if(!productDisplays.isEmpty()){ // Add products that are in the provided list but not in the database
+            for (IdValue pd : productDisplays) {
+                if (!dbProducts.contains(pd)) {
+                    businessDao.insertProductX(businessId, pd.getId(), pd.getValue());
+                }
             }
-        }
 
-        // Remove products that are in the database but not in the provided list
-        for (Integer dbProductId : dbProducts) {
-            if (!products.contains(dbProductId)) {
-                businessDao.deleteProductX(businessId, dbProductId);
+            // Remove products that are in the database but not in the provided list
+            for (IdValue db : dbProducts) {
+                if (!productDisplays.contains(db)) {
+                    businessDao.deleteProductX(businessId, db.getId(), db.getValue());
+                }
             }
-        }
+        } else businessDao.deleteProductXAll(businessId);
 
         BusinessPlan bp = businessDao.selectBusinessPlan(businessId);
         List<Product> p = businessDao.selectProductsByBusiness(businessId, bp.getBusinessCap());
@@ -111,11 +99,22 @@ public class BusinessServiceImpl implements BusinessService {
      */
     @Override
     public SingleMultiple getProductsDisplays(List<Integer> productIds) {
-        List<Integer> s = businessDao.selectUniqueDisplayIds(productIds);
+        List<IdValue> s = businessDao.selectUniqueDisplayIds(productIds);
         List<IdNameValueName> m = businessDao.selectNonUniqueDisplayIds(productIds);
         SingleMultiple sm = new SingleMultiple();
         sm.setSingles(s);
         sm.setMultiples(m);
         return sm;
+    }
+
+    /**
+     * selects id value list of a businesses products/displays
+     *
+     * @param businessId id
+     * @return IdValue list
+     */
+    @Override
+    public List<IdValue> selectDisplayList(Integer businessId) {
+        return businessDao.selectDisplayList(businessId);
     }
 }

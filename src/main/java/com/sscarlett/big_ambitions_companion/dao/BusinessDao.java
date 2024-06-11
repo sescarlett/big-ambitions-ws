@@ -18,35 +18,38 @@ public interface BusinessDao {
    BusinessPlan selectBusinessPlan(Integer businessId);
 
    @Select("SELECT p.*, " +
-           "((CEILING(#{businessCap}::numeric / d.customer_cap::numeric)) * pxd.inventory_cap) AS quantity " +
+           "((CEILING(#{businessCap}::numeric / d.customer_cap::numeric)) * " +
+           " (select inventory_cap from product_x_display where product_id = p.product_id and display_id = d.display_id )) AS quantity " +
            "FROM product p " +
-           "JOIN business_x_product bxp ON p.product_id = bxp.product_id " +
-           "JOIN product_x_display pxd ON bxp.product_id = pxd.product_id " +
-           "JOIN display d ON pxd.display_id = d.display_id " +
-           "WHERE bxp.business_id = #{businessId}")
+           "JOIN business_x bx ON p.product_id = bx.product_id " +
+           "JOIN display d ON bx.display_id = d.display_id " +
+           "WHERE bx.business_id = #{businessId}")
    List<Product> selectProductsByBusiness(Integer businessId, Integer businessCap);
 
    @Select("SELECT d.*, " +
            "SUM(CEILING(#{businessCap}::numeric / d.customer_cap::numeric)) as quantity " +
            "FROM display d " +
-           "JOIN product_x_display pxd ON d.display_id = pxd.display_id " +
-           "JOIN business_x_display bxd ON d.display_id = pxd.display_id " +
-           "WHERE bxd.business_id = #{businessId}" +
+           "JOIN business_x bx ON d.display_id = bx.display_id " +
+           "WHERE bx.business_id = #{businessId} " +
            "GROUP BY d.display_id, d.name, d.cost, d.customer_cap")
    List<Display> selectDisplaysByBusiness(Integer businessId, Integer businessCap);
 
    @Insert("INSERT INTO business (business_id, name, size) VALUES (#{businessId}, #{name}, #{size})")
    void insertNewBusiness(Business business);
 
-   @Select("SELECT product_id from business_x_product WHERE business_id = #{businessId}")
-   List<Integer> selectBusinessProducts(Integer businessId);
+   @Select("SELECT product_id as id, display_id as value from business_x " +
+           "WHERE business_id = #{businessId}")
+   List<IdValue> selectBusinessProducts(Integer businessId);
 
-   @Delete("DELETE FROM business_x_product WHERE business_id = #{businessId} AND product_id = #{productId}")
-   void deleteProductX(Integer businessId, Integer productId);
+   @Delete("DELETE FROM business_x " +
+           "WHERE business_id = #{businessId} " +
+           "AND product_id = #{productId} " +
+           "AND display_id = #{displayId}")
+   void deleteProductX(Integer businessId, Integer productId, Integer displayId);
 
-   @Insert("INSERT INTO business_x_product (business_id, product_id) " +
-           "VALUES (#{businessId}, #{productId})")
-   void insertProductX(Integer businessId, Integer productId);
+   @Insert("INSERT INTO business_x (business_id, display_id, product_id) " +
+           "VALUES (#{businessId}, #{displayId}, #{productId} )")
+   void insertProductX(Integer businessId, Integer productId, Integer displayId);
 
    @Select("SELECT b.business_id, b.name, sc.capacity * 5 as size FROM business b " +
            "JOIN game_x_business gxb ON b.business_id = gxb.business_id " +
@@ -54,27 +57,28 @@ public interface BusinessDao {
            "WHERE gxb.game_id = #{gameId}")
    List<Business> selectBusinessByGame(Integer gameId);
 
-   @Insert("INSERT INTO game_x_business (game_id, business_id) VALUES (#{gameId}, #{businessId})")
+   @Insert("INSERT INTO game_x_business (game_id, business_id) " +
+           "VALUES (#{gameId}, #{businessId})")
    void insertGameX(Integer gameId, Integer businessId);
 
    @Select({
-           "<script>",
-           "SELECT display_id " +
+           "<script> " +
+                   "SELECT product_id as id, display_id as value " +
                    "FROM product_x_display "+
-                   "WHERE product_id IN (" +
-                   "  SELECT product_id" +
-                   "  FROM product_x_display" +
-                   "  WHERE product_id IN" +
-                   "  <foreach item='item' index='index' collection='productIds'" +
-                   "    open='(' separator=',' close=')'>" +
-                   "    #{item}" +
-                   "  </foreach>" +
-                   "  GROUP BY product_id" +
-                   "  HAVING COUNT(display_id) = 1" +
-                   ")" +
+                   "WHERE product_id IN ( " +
+                   "SELECT product_id " +
+                   "FROM product_x_display " +
+                   "WHERE product_id IN " +
+                   "<foreach item='item' index='index' collection='productIds' " +
+                   "open='(' separator=',' close=')'> " +
+                   "#{item} " +
+                   "</foreach> " +
+                   "GROUP BY product_id " +
+                   "HAVING COUNT(display_id) = 1 " +
+                   ") " +
                    "</script>"
    })
-   List<Integer> selectUniqueDisplayIds(@Param("productIds") List<Integer> productIds);
+   List<IdValue> selectUniqueDisplayIds(@Param("productIds") List<Integer> productIds);
 
    @Select({
            "<script>",
@@ -96,4 +100,10 @@ public interface BusinessDao {
                    "</script>"
    })
    List<IdNameValueName> selectNonUniqueDisplayIds(@Param("productIds") List<Integer> productIds);
+
+   @Select("SELECT product_id as id, display_id as value FROM business_x WHERE business_id =#{businessId}")
+   List<IdValue> selectDisplayList(Integer businessId);
+
+   @Delete("DELETE FROM business_x where business_id =#{businessId}")
+   void deleteProductXAll(Integer businessId);
 }
