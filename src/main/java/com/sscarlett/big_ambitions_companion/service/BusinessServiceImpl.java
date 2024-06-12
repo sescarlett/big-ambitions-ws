@@ -61,22 +61,13 @@ public class BusinessServiceImpl implements BusinessService {
      */
     @Override
     public BusinessPlan patchBusinessProducts(Integer businessId, List<IdValue> productDisplays) {
-        List<IdValue> dbProducts = businessDao.selectBusinessProducts(businessId);
+        businessDao.deleteProductXAll(businessId);
 
-        if(!productDisplays.isEmpty()){ // Add products that are in the provided list but not in the database
+        if(!productDisplays.isEmpty()){
             for (IdValue pd : productDisplays) {
-                if (!dbProducts.contains(pd)) {
-                    businessDao.insertProductX(businessId, pd.getId(), pd.getValue());
-                }
+                businessDao.insertProductX(businessId, pd.getId(), pd.getValue());
             }
-
-            // Remove products that are in the database but not in the provided list
-            for (IdValue db : dbProducts) {
-                if (!productDisplays.contains(db)) {
-                    businessDao.deleteProductX(businessId, db.getId(), db.getValue());
-                }
-            }
-        } else businessDao.deleteProductXAll(businessId);
+        }
 
         BusinessPlan bp = businessDao.selectBusinessPlan(businessId);
         List<Product> p = businessDao.selectProductsByBusiness(businessId, bp.getBusinessCap());
