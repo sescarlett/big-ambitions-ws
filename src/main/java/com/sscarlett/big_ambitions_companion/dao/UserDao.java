@@ -23,7 +23,7 @@ public interface UserDao {
     @Select("SELECT user_id FROM users WHERE email = #{email}")
     Integer selectUserIdByLogin(Users users);
 
-    @Select("SELECT first_name, email FROM users WHERE user_id = #{userId}")
+    @Select("SELECT first_name, last_name, email FROM users WHERE user_id = #{userId}")
     Users selectUserById(Integer userId);
 
     @Update("UPDATE users SET first_name = #{firstName}, last_name = #{lastName}, email = #{email} " +
