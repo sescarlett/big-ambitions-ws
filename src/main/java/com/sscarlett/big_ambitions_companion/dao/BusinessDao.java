@@ -106,4 +106,10 @@ public interface BusinessDao {
 
    @Delete("DELETE FROM business_x where business_id =#{businessId}")
    void deleteProductXAll(Integer businessId);
+
+   @Delete("DELETE FROM game_x_business WHERE business_id = #{businessId}")
+   void deleteGameX(Integer businessId);
+
+   @Delete("DELETE FROM business WHERE business_id =#{businessId}")
+   void deleteBusiness(Integer businessId);
 }

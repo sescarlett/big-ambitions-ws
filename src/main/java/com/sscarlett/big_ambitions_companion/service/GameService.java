@@ -20,4 +20,10 @@ public interface GameService {
      * @param game   info
      */
     void postNewGame(Integer userId, Game game);
+
+    /**
+     * delete a game
+     * @param gameId id
+     */
+    void deleteGame(Integer gameId);
 }

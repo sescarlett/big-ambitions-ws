@@ -46,4 +46,9 @@ public class BusinessController {
     public List<IdValue> selectDisplayList(@PathVariable Integer businessId) {
         return businessService.selectDisplayList(businessId);
     }
+
+    @DeleteMapping(value="/delete/{businessId}")
+    public void deleteBusiness(@PathVariable Integer businessId) {
+        businessService.deleteBusiness(businessId);
+    }
 }

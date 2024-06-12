@@ -50,4 +50,10 @@ public interface BusinessService {
      * @return IdValue list
      */
     List<IdValue> selectDisplayList(Integer businessId);
+
+    /**
+     * deletes a business
+     * @param businessId id
+     */
+    void deleteBusiness(Integer businessId);
 }

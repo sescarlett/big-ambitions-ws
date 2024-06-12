@@ -1,5 +1,6 @@
 package com.sscarlett.big_ambitions_companion.service;
 
+import com.sscarlett.big_ambitions_companion.dao.BusinessDao;
 import com.sscarlett.big_ambitions_companion.dao.GameDao;
 import com.sscarlett.big_ambitions_companion.model.Game;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,9 @@ public class GameServiceImpl implements GameService {
 
     @Autowired
     private GameDao gameDao;
+
+    @Autowired
+    private BusinessDao businessDao;
 
     /**
      * gets all the games a user has started
@@ -40,5 +44,24 @@ public class GameServiceImpl implements GameService {
         log.info("business: " + game);
         gameDao.insertNewGame(game);
         gameDao.insertGameX(userId, newId);
+    }
+
+    /**
+     * delete a game
+     *
+     * @param gameId id
+     */
+    @Override
+    public void deleteGame(Integer gameId) {
+        List<Integer> businessIdList = gameDao.selectBusinessIds(gameId);
+
+        for(Integer id: businessIdList) {
+            businessDao.deleteGameX(id);
+            businessDao.deleteProductXAll(id);
+            businessDao.deleteBusiness(id);
+        }
+
+        gameDao.deleteUserX(gameId);
+        gameDao.deleteGame(gameId);
     }
 }

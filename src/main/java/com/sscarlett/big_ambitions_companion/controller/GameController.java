@@ -23,4 +23,9 @@ public class GameController {
     public void postNewGame(@RequestBody Game game, @PathVariable Integer userId) {
         gameService.postNewGame(userId, game);
     }
+
+    @DeleteMapping(value = "/delete/{gameId}")
+    public void deleteGame(@PathVariable Integer gameId) {
+        gameService.deleteGame(gameId);
+    }
 }

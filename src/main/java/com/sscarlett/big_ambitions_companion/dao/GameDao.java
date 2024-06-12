@@ -1,6 +1,7 @@
 package com.sscarlett.big_ambitions_companion.dao;
 
 import com.sscarlett.big_ambitions_companion.model.Game;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -30,4 +31,13 @@ public interface GameDao {
     @Insert("INSERT INTO user_x_game (user_id, game_id) " +
             "VALUES (#{userId}, #{gameId})")
     void insertGameX(Integer userId, Integer gameId);
+
+    @Select("SELECT business_id FROM game_x_business WHERE game_id = #{gameId}")
+    List<Integer> selectBusinessIds(Integer gameId);
+
+    @Delete("DELETE FROM user_x_game WHERE game_id = #{gameId}")
+    void deleteUserX(Integer gameId);
+
+    @Delete("DELETE FROM game WHERE game_id = #{gameId}")
+    void deleteGame(Integer gameId);
 }

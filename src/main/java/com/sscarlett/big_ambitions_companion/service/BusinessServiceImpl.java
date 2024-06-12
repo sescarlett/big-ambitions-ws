@@ -2,14 +2,12 @@ package com.sscarlett.big_ambitions_companion.service;
 
 import com.sscarlett.big_ambitions_companion.dao.BusinessDao;
 import com.sscarlett.big_ambitions_companion.model.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@Slf4j
 public class BusinessServiceImpl implements BusinessService {
 
     @Autowired
@@ -37,9 +35,7 @@ public class BusinessServiceImpl implements BusinessService {
     @Override
     public void postNewBusiness(Business business, Integer gameId) {
         Integer newId = businessDao.selectMaxId();
-        log.info("newId: " + newId);
         business.setBusinessId(newId);
-//        log.info("business: " + business);
         businessDao.insertNewBusiness(business);
         businessDao.insertGameX(gameId, newId);
 
@@ -116,5 +112,17 @@ public class BusinessServiceImpl implements BusinessService {
     @Override
     public List<IdValue> selectDisplayList(Integer businessId) {
         return businessDao.selectDisplayList(businessId);
+    }
+
+    /**
+     * deletes a business
+     *
+     * @param businessId id
+     */
+    @Override
+    public void deleteBusiness(Integer businessId) {
+        businessDao.deleteGameX(businessId);
+        businessDao.deleteProductXAll(businessId);
+        businessDao.deleteBusiness(businessId);
     }
 }
