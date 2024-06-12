@@ -16,7 +16,7 @@ public interface ImportDao {
             " JOIN game_x_business gxb2 ON b.business_id = gxb2.business_id " +
             " JOIN store_cap sc ON b.size = sc.store_cap_id " +
             " JOIN business_x bx2 ON b.business_id = bx2.business_id " +
-            " WHERE gxb2.game_id = 1 AND bx2.product_id = p.product_id" +
+            " WHERE gxb2.game_id = #{gameId} AND bx2.product_id = p.product_id" +
             ") AS quantity " +
             "FROM product p " +
             "JOIN import_x_product ixp on p.product_id = ixp.product_id " +

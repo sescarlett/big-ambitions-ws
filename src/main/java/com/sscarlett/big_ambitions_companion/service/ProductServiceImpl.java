@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
         newProduct.setProductId(newId);
         newProduct.setName(product.getName());
         newProduct.setCost(product.getCost());
-        newProduct.setQuantity(newProduct.getQuantity());
+        newProduct.setValue(product.getValue());
         productDao.insertNewProduct(newProduct);
         for (IdValue newValue : product.getDisplays()) {
             productDao.insertDisplayX(newId, newValue.getId(), newValue.getValue());
