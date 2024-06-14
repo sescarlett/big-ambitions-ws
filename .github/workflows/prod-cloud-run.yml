@@ -11,7 +11,7 @@ env:
 #  REGISTRY_REGION: ${{ vars.REGISTRY_REGION }}
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   PROJECT_NUMBER: ${{ secrets.PROJECT_NUMBER }}
-  SERVICE: tiered-web-app-api
+  SERVICE: big-ambitions-api
   CLOUD_RUN_SA: ${{ secrets.CLOUD_RUN_SA }}
   CLOUD_SQL_CONNECTION: ${{ secrets.CLOUD_SQL_CONNECTION }}
   VPC_CONNECTION: ${{ secrets.VPC_CONNECTION }}
