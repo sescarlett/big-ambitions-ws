@@ -30,7 +30,7 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://big-ambitions-api-dlvg7ncywa-uc.a.run.app"));
+        configuration.setAllowedOrigins(List.of("https://big-ambitions-api-dlvg7ncywa-uc.a.run.app", "https://bigambitionscompanion.com"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
