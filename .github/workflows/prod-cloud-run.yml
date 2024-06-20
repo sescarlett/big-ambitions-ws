@@ -125,6 +125,7 @@ jobs:
             --concurrency 100 \
             --platform "managed" \
             --allow-unauthenticated \
+            --ingress all \
             --set-cloudsql-instances ${{ env.CLOUD_SQL_CONNECTION }} \
             --service-account ${{ env.CLOUD_RUN_SA }} \
             --set-env-vars "logback.appenders=CLOUD,PROJECT_NUMBER=${{ env.PROJECT_NUMBER }}" \
