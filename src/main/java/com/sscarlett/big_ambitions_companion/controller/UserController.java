@@ -19,6 +19,7 @@ public class UserController {
 
     @PostMapping(value = "/login", produces = "application/json")
     public Integer loginUser(@RequestBody Users users) {
+        System.out.println("[LOGIN]: " + users);
         return userService.loginUser(users);
     }
 
