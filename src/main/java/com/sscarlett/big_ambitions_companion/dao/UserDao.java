@@ -13,10 +13,10 @@ public interface UserDao {
     Integer selectMaxId();
 
     @Insert("INSERT INTO users (user_id, first_name, last_name, email, password, user_role) " +
-            "VALUES (#{userId}, #{firstName}, #{lastName}, #{email}, crypt(#{password}, gen_salt('bf')), 2)")
+            "VALUES (#{userId}, #{firstName}, #{lastName}, #{email}, #{password})")
     void insertNewUser(Users users);
 
-    @Select("SELECT crypt(#{password}, password) = password " +
+    @Select("SELECT #{password} = password " +
             "FROM users WHERE email = #{email}")
     Boolean verifyPassword(Users users);
 
@@ -30,7 +30,7 @@ public interface UserDao {
             "WHERE user_id = #{userId}")
     void updateUser(Users users);
 
-    @Update("UPDATE users set password = crypt(#{password}, gen_salt('bf')) " +
+    @Update("UPDATE users set password = #{password} " +
             "WHERE user_id = #{userId}")
     void updatePassword(Users users);
 }

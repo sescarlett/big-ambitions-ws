@@ -18,21 +18,23 @@ public interface BusinessDao {
    BusinessPlan selectBusinessPlan(Integer businessId);
 
    @Select("SELECT p.*, " +
-           "((CEILING(#{businessCap}::numeric / d.customer_cap::numeric)) * " +
-           " (select inventory_cap from product_x_display where product_id = p.product_id and display_id = d.display_id )) AS quantity " +
+           "       CEIL(#{businessCap} / d.customer_cap) * " +
+           "       (SELECT inventory_cap " +
+           "        FROM product_x_display " +
+           "        WHERE product_id = p.product_id AND display_id = d.display_id) AS quantity " +
            "FROM product p " +
            "JOIN business_x bx ON p.product_id = bx.product_id " +
            "JOIN display d ON bx.display_id = d.display_id " +
            "WHERE bx.business_id = #{businessId}")
-   List<Product> selectProductsByBusiness(Integer businessId, Integer businessCap);
+   List<Product> selectProductsByBusiness(@Param("businessId") Integer businessId, @Param("businessCap") Integer businessCap);
 
    @Select("SELECT d.*, " +
-           "SUM(CEILING(#{businessCap}::numeric / d.customer_cap::numeric)) as quantity " +
+           "       SUM(CEIL(#{businessCap} / d.customer_cap)) AS quantity " +
            "FROM display d " +
            "JOIN business_x bx ON d.display_id = bx.display_id " +
            "WHERE bx.business_id = #{businessId} " +
            "GROUP BY d.display_id, d.name, d.cost, d.customer_cap")
-   List<Display> selectDisplaysByBusiness(Integer businessId, Integer businessCap);
+   List<Display> selectDisplaysByBusiness(@Param("businessId") Integer businessId, @Param("businessCap") Integer businessCap);
 
    @Insert("INSERT INTO business (business_id, name, size) VALUES (#{businessId}, #{name}, #{size})")
    void insertNewBusiness(Business business);

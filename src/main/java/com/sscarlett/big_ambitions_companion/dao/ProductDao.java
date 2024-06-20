@@ -13,28 +13,16 @@ public interface ProductDao {
     @Select("SELECT COALESCE(MAX(product_id) + 1, 1) FROM product")
     Integer selectMaxId();
 
-    @Select("WITH importer_agg AS ( " +
-            "    SELECT p.product_id, " +
-            "           string_agg(DISTINCT i.name, ', ') AS importerNames " +
-            "    FROM product p " +
-            "    JOIN public.import_x_product ixp ON p.product_id = ixp.product_id " +
-            "    JOIN public.import i ON i.import_id = ixp.import_id " +
-            "    GROUP BY p.product_id " +
-            "), " +
-            "display_agg AS ( " +
-            "    SELECT p.product_id, " +
-            "           string_agg(DISTINCT d.name, ', ') AS displayNames " +
-            "    FROM product p " +
-            "    JOIN public.product_x_display pxd ON p.product_id = pxd.product_id " +
-            "    JOIN public.display d ON pxd.display_id = d.display_id " +
-            "    GROUP BY p.product_id " +
-            ") " +
-            "SELECT p.*, " +
-            "       ia.importerNames, " +
-            "       da.displayNames " +
+    @Select("SELECT p.product_id, p.name, p.cost, " +
+            "(SELECT GROUP_CONCAT(DISTINCT i.name SEPARATOR ', ') " +
+            " FROM import_x_product ixp " +
+            " JOIN import i ON i.import_id = ixp.import_id " +
+            " WHERE ixp.product_id = p.product_id) AS importerNames, " +
+            "(SELECT GROUP_CONCAT(DISTINCT d.name SEPARATOR ', ') " +
+            " FROM product_x_display pxd " +
+            " JOIN display d ON d.display_id = pxd.display_id " +
+            " WHERE pxd.product_id = p.product_id) AS displayNames " +
             "FROM product p " +
-            "LEFT JOIN importer_agg ia ON p.product_id = ia.product_id " +
-            "LEFT JOIN display_agg da ON p.product_id = da.product_id " +
             "ORDER BY p.name")
     List<ProductList> selectAllProducts();
 
