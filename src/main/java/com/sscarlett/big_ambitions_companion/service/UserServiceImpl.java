@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Integer loginUser(Users users) {
+        System.out.println("[START_LOGIN]");
         Boolean isPasswordValid = userDao.verifyPassword(users);
         System.out.println("[VALID_PASSWORD]: "+ isPasswordValid);
         if (!Boolean.TRUE.equals(isPasswordValid)) {
