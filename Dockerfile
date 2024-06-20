@@ -3,8 +3,6 @@ LABEL authors="Stephen Scarlett"
 
 WORKDIR /workspace/app
 
-ENV HOST 0.0.0.0
-
 #RUN pwd
 RUN mkdir -p target/dependency
 COPY target/*.jar target/app.jar
