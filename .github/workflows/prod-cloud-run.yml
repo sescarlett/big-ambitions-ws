@@ -104,7 +104,7 @@ jobs:
           context: .
           push: true
           tags: |
-            us-central1-docker.pkg.dev/big-ambitions-companion/scarlett-apps-images-prod/tiered-web-app-api:${{ steps.read_property.outputs.git-commit-id-describe }}
+            us-central1-docker.pkg.dev/big-ambitions-companion/scarlett-apps-images-prod/big-ambitions-api:${{ steps.read_property.outputs.git-commit-id-describe }}
 
       - name: Get VPC Connector ID
         id: vpc_name
@@ -117,7 +117,7 @@ jobs:
           gcloud run deploy ${{ env.SERVICE }} \
             --project ${{ env.PROJECT_ID }} \
             --region ${{ env.REGION }} \
-            --image us-central1-docker.pkg.dev/big-ambitions-companion/scarlett-apps-images-prod/tiered-web-app-api:${{ steps.read_property.outputs.git-commit-id-describe }} \
+            --image us-central1-docker.pkg.dev/big-ambitions-companion/scarlett-apps-images-prod/big-ambitions-api:${{ steps.read_property.outputs.git-commit-id-describe }} \
             --port 80 \
             --min-instances 1 \
             --max-instances 1 \
