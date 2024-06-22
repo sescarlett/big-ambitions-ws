@@ -56,7 +56,8 @@ public interface BusinessDao {
    @Select("SELECT b.business_id, b.name, sc.capacity * 5 as size FROM business b " +
            "JOIN game_x_business gxb ON b.business_id = gxb.business_id " +
            "JOIN store_cap sc ON b.size = sc.store_cap_id " +
-           "WHERE gxb.game_id = #{gameId}")
+           "WHERE gxb.game_id = #{gameId} " +
+           "ORDER BY b.name")
    List<Business> selectBusinessByGame(Integer gameId);
 
    @Insert("INSERT INTO game_x_business (game_id, business_id) " +

@@ -22,7 +22,8 @@ public interface GameDao {
             "GROUP BY gxb.game_id) " +
             "AS sub ON g.game_id = sub.game_id " +
             "JOIN user_x_game uxg ON g.game_id = uxg.game_id " +
-            "WHERE uxg.user_id = #{userId}")
+            "WHERE uxg.user_id = #{userId} " +
+            "ORDER BY g.game_id")
     List<Game> selectUsersGames(Integer userId);
 
     @Insert("INSERT INTO game (game_id, name) values (#{gameId}, #{name})")
